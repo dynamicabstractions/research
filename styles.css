@@ -1,0 +1,19 @@
+.nav-links li:nth-child(1) {
+    opacity: 40%;
+}
+
+.nav-links li:nth-child(1):hover {
+    opacity: 100%;
+}
+
+.nav-links li:nth-child(2) {
+    opacity: 100%;
+}
+
+.nav-links li:nth-child(3) {
+    opacity: 40%;
+}
+
+.nav-links li:nth-child(3):hover {
+    opacity: 100%;
+}
