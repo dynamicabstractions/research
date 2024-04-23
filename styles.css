@@ -17,3 +17,11 @@
 .nav-links li:nth-child(3):hover {
     opacity: 100%;
 }
+
+.title {
+    font-weight: 600;
+}
+
+.authors {
+    font-style: oblique;
+}
