@@ -3,6 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/public-google-sheets-parser@latest"></script>
+    <script>
+      const upcoming_events_div = document.getElementById("events");
+      const parser = new PublicGoogleSheetsParser('1oX0Ymzlhu-wtVyNZ94M4bCvqwjMlU2mOoKeWjta3zZw', { useFormat: true });
+      const readingsData = {
+        other_readings: [],
+        research_items: [],
+      };
+      const retrieveDataPromises = [];
+
+      parser.setOption({ sheetName: "Blog, Articles, Videos" });
+      retrieveDataPromises.push(
+        parser.parse().then(data => (readingsData.other_readings = data))
+      );
+
+      parser.setOption({ sheetName: "Research" });
+      retrieveDataPromises.push(
+        parser.parse().then(data => (readingsData.research_items = data))
+      );
+
+      // When the document loads, inject the event data from the Google Sheet:
+      document.addEventListener('DOMContentLoaded', function() {
+        Promise.allSettled(retrieveDataPromises).then(results => {
+          if (results.some(r => r.status === "rejected")) {
+            // Error retrieving the spreadsheet, default to just injecting the link directly: 
+            const container_div = document.getElementById("container");
+            container_div.innerHTML = `
+              <p>&#128560; Error loading data dynamically. See the schedule in the <a href="https://docs.google.com/spreadsheets/d/1oX0Ymzlhu-wtVyNZ94M4bCvqwjMlU2mOoKeWjta3zZw/edit?usp=sharing">public Google Sheet</a>.</p>
+            `;
+            return;
+          }
+
+          // Remove all loading spinners 
+          document.querySelectorAll('.lds-ellipsis').forEach(e => e.remove());
+
+          // Success processing sheet --inject it into the HTML:
+          Object.keys(readingsData).forEach((event_container_id) => {
+            let eventsContainer = document.getElementById(event_container_id);
+            readingsData[event_container_id].forEach(function(event) {
+              const eventHtml = `
+                  <li>
+                    <span class="title">${event.Title}</span> 
+                    <span class="authors">${event.Authors}</span> 
+                    <a href="${event.Link}">${event.Link}</a>
+                  </li>
+              `;
+              eventsContainer.innerHTML += eventHtml;
+            });
+          });
+        });
+      });
+    </script>
+
     <title>dynamic abstractions</title>
     <!-- <link rel="stylesheet" href="../styles.css">  -->
     <link rel="stylesheet" href="main.css">
@@ -23,81 +77,12 @@
         </nav>
         <section id="research" class="section">
           <h2>Research</h2>
-          <ul>
-            <li>
-              <span class="title">What is interaction?</span> <span class="authors">Kasper Hornbæk and Antti Oulasvirta.</span> <a href="https://dl.acm.org/doi/10.1145/3025453.3025765 ">https://dl.acm.org/doi/10.1145/3025453.3025765</a>
-            </li>
-            <li>
-              <span class="title">Crossing the Bridge over Norman’s Gulf of Execution: Revealing Feedforward’s True Identity</span> <span class="authors">Jo Vermeulen, Kris Luyten, Elise van den Hoven, and Karin Coninx</span> <a href="https://dl.acm.org/doi/pdf/10.1145/2470654.2466255 ">https://dl.acm.org/doi/pdf/10.1145/2470654.2466255 </a>
-            </li>
-            <li>
-              <span class="title">Imagining a Future of Designing with AI: Dynamic Grounding, Constructive Negotiation, and Sustainable Motivation
-
-              </span> <span class="authors">Priyan Vaithilingam, Ian Arawjo, Elena L. Glassman</span> <a href="https://arxiv.org/abs/2402.07342">https://arxiv.org/abs/2402.07342</a>
-            </li>
-            <li>
-              <span class="title">DrawTalking: Building Interactive Worlds by Sketching and Speaking</span> <span class="authors">Karl Toby Rosenberg, Rubaiat Habib Kazi, Li-Yi Wei, Haijun Xia, Ken Perlin
-              </span> <a href="https://arxiv.org/abs/2401.05631">https://arxiv.org/abs/2401.05631</a>
-            </li>
-            <li>
-              <span class="title">DreamSketch (UIST 2017)</span> <span class="authors">Rubaiat Habib, Tovi Grossman, Hyunmin Cheong, Ali Hashemi, George Fitzmaurice</span> <a href="https://www.research.autodesk.com/publications/dreamsketch-early-stage-3d-design-explorations-with-sketching-and-generative-design/">https://www.research.autodesk.com/publications/dreamsketch-early-stage-3d-design-explorations-with-sketching-and-generative-design/</a>
-            </li>
-            <li>
-              <span class="title">Beyond the Artifact: Power as a Lens for Creativity Support Tools</span> <span class="authors">Jingyi Li, Eric Rawn, Jacob Ritchie, Jasper Tran O'Leary, and Sean Follmer</span> <a href="https://dl.acm.org/doi/10.1145/3586183.3606831">https://dl.acm.org/doi/10.1145/3586183.3606831</a>
-            </li>
-            <li>
-              <span class="title">Energy-Brushes: Interactive Tools for Illustrating Stylized Elemental Dynamics</span> <span class="authors">Jun Xing, Rubaiat Habib Kazi, Tovi Grossman, Li-Yi Wei, Jos Stam, and George Fitzmaurice</span> <a href="https://dl.acm.org/doi/10.1145/2984511.2984585">https://dl.acm.org/doi/10.1145/2984511.2984585</a>
-            </li>
-            <li>
-              <span class="title">RealitySketch: Embedding Responsive Graphics and Visualizations in AR through Dynamic Sketching</span> <span class="authors">Ryo Suzuki, Rubaiat Habib Kazi, Li-Yi Wei, Stephen DiVerdi, Wilmot Li, Daniel Leithinger</span> <a href="https://ryosuzuki.org/realitysketch/">https://ryosuzuki.org/realitysketch/</a>
-            </li>
-            <li>
-              <span class="title">WorldSmith: Iterative and Expressive Prompting for World Building with a Generative AI</span> <span class="authors">Hai Dang, Frederik Brudy, George Fitzmaurice, Fraser Anderson</span> <a href="https://arxiv.org/abs/2308.13355">https://arxiv.org/abs/2308.13355</a>
-            </li>
-            <li>
-              <span class="title">How do we design for concreteness fading? Survey, general framework, and design dimensions</span> <span class="authors">Sangho Suh, Martinet Lee, and Edith Law</span> <a href="https://dl.acm.org/doi/10.1145/3392063.3394413">https://dl.acm.org/doi/10.1145/3392063.3394413</a>
-            </li>
-            <li>
-              <span class="title">Transforming the Reading Experience of Scientific Documents with Polymorphism.</span> <span class="authors">Masson, Damien</span> <a href="https://damienmasson.com/pdfs/phdthesis.pdf">https://damienmasson.com/pdfs/phdthesis.pdf</a>
-            </li>
-            <li>
-              <span class="title">Codetoon: Story ideation, auto comic generation, and structure mapping for code-driven storytelling</span> <span class="authors">Suh, Sangho, Jian Zhao, and Edith Law</span> <a href="https://sanghosuh.github.io/papers/codetoon_uist.pdf">https://sanghosuh.github.io/papers/codetoon_uist.pdf</a>
-            </li>
-            <li>
-              <span class="title">Constructing Embodied Algebra by Sketching.</span> <span class="authors">Saquib, Nazmus, Rubaiat Habib Kazi, Li-yi Wei, Gloria Mark and Deb Roy</span> <a href="https://dl.acm.org/doi/10.1145/3411764.3445460">https://dl.acm.org/doi/10.1145/3411764.3445460</a>
-            </li>
-            <li>
-              <span class="title">WritLarge: Ink Unleashed by Unified Scope, Action, & Zoom.</span> <span class="authors">Xia, Haijun, Ken Hinckley, Michel Pahud, Xiao Tu, and Bill Buxton</span> <a href="https://creativity.ucsd.edu/papers/writlarge.pdf">https://creativity.ucsd.edu/papers/writlarge.pdf</a>
-            </li>
-            <li>
-              <span class="title">The functions of multiple representations</span> <span class="authors">Ainsworth, Shaaron</span> <a href="https://doi.org/10.1016/S0360-1315(99)00029-9">https://doi.org/10.1016/S0360-1315(99)00029-9</a>
-            </li>
-            <li>
-              <span class="title">Teaching programming with gamified semantics.</span> <span class="authors">Arawjo, Ian, Cheng-Yao Wang, Andrew C. Myers, Erik Andersen, and François Guimbretière</span> <a href="https://dl.acm.org/doi/abs/10.1145/3025453.3025711">https://dl.acm.org/doi/abs/10.1145/3025453.3025711</a>
-            </li>
-            <li>
-              <span class="title">ChartDetective: Easy and Accurate Interactive Data Extraction from Complex Vector Charts</span> <span class="authors">Masson, Damien, Sylvain Malacria, Daniel Vogel, Edward Lank, and Géry Casiez</span> <a href="https://dl.acm.org/doi/abs/10.1145/3544548.3581113">https://dl.acm.org/doi/abs/10.1145/3544548.3581113</a>
-            </li>
-            <li>
-              <span class="title">Living Papers: A Language Toolkit for Augmented Scholarly Communication</span> <span class="authors">Jeffrey Heer, Matthew Conlen, Vishal Devireddy, Tu Nguyen, and Joshua Horowitz</span> <a href="https://dl.acm.org/doi/10.1145/3586183.3606791">https://dl.acm.org/doi/10.1145/3586183.3606791</a>
-            </li>
-            <li>
-              <span class="title">Reification, polymorphism and reuse: three principles for designing visual interfaces.</span> <span class="authors">Beaudouin-Lafon, Michel, and Wendy E. Mackay</span> <a href="https://dl.acm.org/doi/10.1145/345513.345267">https://dl.acm.org/doi/10.1145/345513.345267</a>
-            </li>
+          <ul id="research_items">
           </ul>
         </section>
         <section id="readings" class="section">
             <h2>Readings</h2>
-            <ul>
-              <li>
-                <span class="title">On Notational Programming for Notebook Environments</span> <span class="authors">Ian Arawjo</span> <a href="https://ianarawjo.medium.com/on-notational-programming-for-notebook-environments-710a7b4f35e6">https://ianarawjo.medium.com/on-notational-programming-for-notebook-environments-710a7b4f35e6</a>
-              </li>
-              <li>
-                <span class="title">Sketch-n-Sketch</span> <span class="authors"> Ravi Chugh, Nick Collins, Brian Hempel, Justin Lubin, and Mikaël Mayer</span> <a href="https://ravichugh.github.io/sketch-n-sketch/">https://ravichugh.github.io/sketch-n-sketch/</a>
-              </li>
-              <li>
-                <span class="title">Up and down the ladder of abstraction</span> <span class="authors">Bret Victor</span> <a href="https://worrydream.com/LadderOfAbstraction/">https://worrydream.com/LadderOfAbstraction/</a>
-              </li>
+            <ul id="other_readings">
             </ul>
           </section>
         <section id="contact" class="right-aligned">
