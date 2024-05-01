@@ -45,9 +45,8 @@
             readingsData[event_container_id].forEach(function(event) {
               const eventHtml = `
                   <li>
-                    <span class="title">${event.Title}</span> 
-                    <span class="authors">${event.Authors}</span> 
-                    <a class="link" href="${event.Link}">${event.Link}</a>
+                    <span class="title"><a class="link" href="${event.Link}">${event.Title}</a>.</span> 
+                    <span class="authors">${event.Authors}</span>
                   </li>
               `;
               eventsContainer.innerHTML += eventHtml;
@@ -79,16 +78,16 @@
             <li><a tabindex="3" href="#contact">Contact</a></li>
           </ul>
         </nav>
+        <section id="readings" class="section">
+            <h2>Readings</h2>
+            <ul id="other_readings">
+            </ul>
+        </section>
         <section id="research" class="section">
           <h2>Research</h2>
           <ul id="research_items">
           </ul>
         </section>
-        <section id="readings" class="section">
-            <h2>Readings</h2>
-            <ul id="other_readings">
-            </ul>
-          </section>
         <section id="contact" class="right-aligned">
           <h4>contact</h4>
           For any questions, please email to dynamicabstractions [at] gmail [dot] com.
