@@ -289,6 +289,10 @@ section {
     margin-bottom: 80px;
 }
 
+section h2 {
+    margin-bottom: 0px;
+}
+
 .content::-webkit-scrollbar {
     display: none;
 }
