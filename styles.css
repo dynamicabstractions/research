@@ -29,3 +29,11 @@
 .link {
     display: block;
 }
+
+section li {
+    list-style: none;
+}
+
+span.title {
+    display: inline-block;
+}
