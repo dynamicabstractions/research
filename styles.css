@@ -26,6 +26,14 @@
     opacity: 100%;
 }
 
+.nav-links li:nth-child(5) {
+    opacity: 40%;
+}
+
+.nav-links li:nth-child(5):hover {
+    opacity: 100%;
+}
+
 .title {
     font-weight: 700;
 }
